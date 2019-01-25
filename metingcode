@@ -1,0 +1,31 @@
+import sounddevice as sd
+import numpy as np
+import time
+import sys
+
+sys.path.append("/home/pi/Meting/test3.py")
+
+duration = 10 #seconds
+
+def print_sound(indata, outdata, frames, time, status):
+    kleur = ""
+
+    volume_norm = np.linalg.norm(indata)*10
+
+    if int(volume_norm) > 0 and int(volume_norm) < 10:
+        kleur = "groen"
+    elif int(volume_norm) >= 10 and int(volume_norm) < 50:
+        kleur = "oranje"
+    elif int(volume_norm) > 50:
+        kleur = "rood"
+   
+    if kleur == "":
+        return 
+
+    with open('metingen.txt', 'a',) as metingen:       
+        metingen.write(kleur + ", " + str(int(volume_norm)))
+    
+with sd.Stream(callback=print_sound):
+    while True:
+        sd.sleep(duration * 1)
+        time.sleep(1)
